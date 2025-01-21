@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word of the Day</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 90%;
+            border-radius: 15px;
+            background: #fff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            position: relative;
+        }
+
+        .main-word {
+            font-size: 5rem;
+            font-weight: 700;
+            color: #4a90e2;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .taskbar {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: slideUp 0.5s ease-in-out;
+        }
+
+        .taskbar button {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            opacity: 0.9;
+            transition: all 0.3s ease;
+        }
+
+        .taskbar button:hover {
+            background: #357ab7;
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .definition, .synonym {
+            display: none;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="main-word" id="wordDisplay">Loading...</div>
+
+        <div class="taskbar">
+            <button onclick="pronounceWord()">Pronounce</button>
+            <button onclick="toggleDefinition()">Definition</button>
+            <button onclick="toggleSynonym()">Synonym</button>
+        </div>
+
+        <div class="definition" id="definition">Loading definition...</div>
+        <div class="synonym" id="synonym">Loading synonym...</div>
+    </div>
+
+    <script>
+        // Array of words for random generation
+        const words = [
+            { word: 'Serendipity', definition: 'The occurrence of events by chance in a happy or beneficial way.', synonym: 'Chance' },
+            { word: 'Ephemeral', definition: 'Lasting for a very short time.', synonym: 'Momentary' },
+            { word: 'Euphoria', definition: 'A feeling or state of intense excitement and happiness.', synonym: 'Elation' },
+            { word: 'Quixotic', definition: 'Extremely idealistic; unrealistic and impractical.', synonym: 'Impractical' },
+            { word: 'Luminous', definition: 'Full of or shedding light; bright or shining.', synonym: 'Radiant' }
+        ];
+
+        // Function to choose a random word
+        function getRandomWord() {
+            const randomIndex = Math.floor(Math.random() * words.length);
+            return words[randomIndex];
+        }
+
+        // Set the Word of the Day
+        const word = getRandomWord();
+        document.getElementById('wordDisplay').textContent = word.word;
+        
+        // Pronounce function
+        function pronounceWord() {
+            const speech = new SpeechSynthesisUtterance(word.word);
+            window.speechSynthesis.speak(speech);
+        }
+
+        // Toggle definition visibility
+        function toggleDefinition() {
+            const definitionElement = document.getElementById('definition');
+            definitionElement.style.display = definitionElement.style.display === 'none' || definitionElement.style.display === '' 
+                ? 'block' : 'none';
+            definitionElement.textContent = word.definition;
+        }
+
+        // Toggle synonym visibility
+        function toggleSynonym() {
+            const synonymElement = document.getElementById('synonym');
+            synonymElement.style.display = synonymElement.style.display === 'none' || synonymElement.style.display === '' 
+                ? 'block' : 'none';
+            synonymElement.textContent = word.synonym;
+        }
+    </script>
+
+</body>
+</html>
