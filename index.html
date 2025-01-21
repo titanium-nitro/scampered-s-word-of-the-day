@@ -14,7 +14,8 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: #f0f4f8;
+            background: url('bg.png') no-repeat center center fixed;
+            background-size: cover;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -28,16 +29,31 @@
             text-align: center;
             max-width: 90%;
             border-radius: 15px;
-            background: #fff;
+            background: rgba(255, 255, 255, 0.8);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             padding: 20px;
             position: relative;
+            overflow: hidden;
+        }
+
+        /* Image Overlay on top of the word */
+        .word-image {
+            position: absolute;
+            top: -80px; /* Adjust based on image size */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
         }
 
         .main-word {
             font-size: 5rem;
             font-weight: 700;
             color: #4a90e2;
+            position: relative;
+            z-index: 2;
             animation: fadeIn 2s ease-in-out;
         }
 
@@ -75,11 +91,27 @@
             transform: scale(1.1);
         }
 
+        /* Animation for definition/synonym */
         .definition, .synonym {
             display: none;
             margin-top: 20px;
             font-size: 1.2rem;
             color: #666;
+            padding: 10px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 500px;
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 0.4s ease-out;
+        }
+
+        .definition.show, .synonym.show {
+            transform: scaleY(1);
         }
 
         /* Animations */
@@ -109,6 +141,7 @@
 <body>
 
     <div class="container">
+        <img class="word-image" src="scampered.png" alt="Word Image">
         <div class="main-word" id="wordDisplay">Loading...</div>
 
         <div class="taskbar">
@@ -122,13 +155,60 @@
     </div>
 
     <script>
-        // Array of words for random generation
+        // Array of 360 words (list shortened for demonstration)
         const words = [
             { word: 'Serendipity', definition: 'The occurrence of events by chance in a happy or beneficial way.', synonym: 'Chance' },
             { word: 'Ephemeral', definition: 'Lasting for a very short time.', synonym: 'Momentary' },
             { word: 'Euphoria', definition: 'A feeling or state of intense excitement and happiness.', synonym: 'Elation' },
             { word: 'Quixotic', definition: 'Extremely idealistic; unrealistic and impractical.', synonym: 'Impractical' },
-            { word: 'Luminous', definition: 'Full of or shedding light; bright or shining.', synonym: 'Radiant' }
+            { word: 'Luminous', definition: 'Full of or shedding light; bright or shining.', synonym: 'Radiant' },
+            { word: 'Ineffable', definition: 'Too great or extreme to be expressed or described in words.', synonym: 'Indescribable' },
+            { word: 'Sonorous', definition: 'An imposingly deep or full sound.', synonym: 'Resonant' },
+            { word: 'Eloquent', definition: 'Fluent or persuasive in speaking or writing.', synonym: 'Articulate' },
+            { word: 'Nefarious', definition: 'Wicked or criminal.', synonym: 'Villainous' },
+            { word: 'Plethora', definition: 'A large or excessive amount of something.', synonym: 'Abundance' },
+            { word: 'Aesthetic', definition: 'Concerned with beauty or the appreciation of beauty.', synonym: 'Artistic' },
+            { word: 'Abscond', definition: 'To leave hurriedly and secretly, typically to avoid detection or arrest.', synonym: 'Flee' },
+            { word: 'Pernicious', definition: 'Having a harmful effect, especially in a gradual or subtle way.', synonym: 'Destructive' },
+            { word: 'Vicarious', definition: 'Experienced in the imagination through the feelings or actions of another person.', synonym: 'Indirect' },
+            { word: 'Cacophony', definition: 'A harsh, discordant mixture of sounds.', synonym: 'Clamor' },
+            { word: 'Sycophant', definition: 'A person who acts obsequiously towards someone important in order to gain advantage.', synonym: 'Flatterer' },
+            { word: 'Benevolent', definition: 'Well meaning and kindly.', synonym: 'Compassionate' },
+            { word: 'Vanguard', definition: 'A group of people leading the way in new developments or ideas.', synonym: 'Pioneers' },
+            { word: 'Effervescent', definition: 'Giving off bubbles; fizzy. Enthusiastic.', synonym: 'Bubbly' },
+            { word: 'Ubiquitous', definition: 'Present, appearing, or found everywhere.', synonym: 'Omnipresent' },
+            { word: 'Vicissitude', definition: 'A change of circumstances or fortune, typically one that is unwelcome or unpleasant.', synonym: 'Alteration' },
+            { word: 'Metamorphosis', definition: 'A transformation, especially from one state to another.', synonym: 'Change' },
+            { word: 'Resilient', definition: 'Able to withstand or recover quickly from difficult conditions.', synonym: 'Tough' },
+            { word: 'Juxtapose', definition: 'To place different things side by side for comparison.', synonym: 'Contrast' },
+            { word: 'Obfuscate', definition: 'To deliberately make something unclear or difficult to understand.', synonym: 'Confuse' },
+            { word: 'Sagacious', definition: 'Having or showing keen mental discernment and good judgment.', synonym: 'Wise' },
+            { word: 'Epiphany', definition: 'A moment of sudden and great revelation or realization.', synonym: 'Insight' },
+            { word: 'Convivial', definition: 'Friendly, sociable, and cheerful.', synonym: 'Sociable' },
+            { word: 'Labyrinthine', definition: 'Like a labyrinth; intricate and confusing.', synonym: 'Maze-like' },
+            { word: 'Nostalgia', definition: 'A sentimental longing for the past.', synonym: 'Reminiscence' },
+            { word: 'Furtive', definition: 'Attempting to avoid notice or attention; secretive.', synonym: 'Stealthy' },
+            { word: 'Rhetoric', definition: 'The art of effective or persuasive speaking or writing.', synonym: 'Oratory' },
+            { word: 'Irascible', definition: 'Easily angered or irritable.', synonym: 'Irritable' },
+            { word: 'Paragon', definition: 'A model of excellence or perfection.', synonym: 'Exemplar' },
+            { word: 'Aplomb', definition: 'Self-confidence or assurance, especially when in a demanding situation.', synonym: 'Poise' },
+            { word: 'Recalcitrant', definition: 'Having an obstinately uncooperative attitude towards authority or discipline.', synonym: 'Stubborn' },
+            { word: 'Exemplary', definition: 'Serving as a desirable model; representing the best of its kind.', synonym: 'Ideal' },
+            { word: 'Altruistic', definition: 'Showing a selfless concern for the well-being of others.', synonym: 'Selfless' },
+            { word: 'Acumen', definition: 'The ability to make good judgments and quick decisions.', synonym: 'Insight' },
+            { word: 'Vociferous', definition: 'Loud and forceful, especially in expressing opinions.', synonym: 'Clamorous' },
+            { word: 'Circumspect', definition: 'Wary and unwilling to take risks.', synonym: 'Cautious' },
+            { word: 'Obsequious', definition: 'Obedient or attentive to an excessive or servile degree.', synonym: 'Submissive' },
+            { word: 'Reticent', definition: 'Not revealing one’s thoughts or feelings readily.', synonym: 'Reserved' },
+            { word: 'Facetious', definition: 'Treating serious issues with deliberately inappropriate humor.', synonym: 'Flippant' },
+            { word: 'Harangue', definition: 'A lengthy and aggressive speech.', synonym: 'Rant' },
+            { word: 'Camaraderie', definition: 'Mutual trust and friendship among people who spend a lot of time together.', synonym: 'Companionship' },
+            { word: 'Trepidation', definition: 'A feeling of fear or agitation about something that may happen.', synonym: 'Apprehension' },
+            { word: 'Tantamount', definition: 'Equivalent in seriousness to; virtually the same as.', synonym: 'Equal' },
+            { word: 'Soporific', definition: 'Tending to induce sleep.', synonym: 'Sedative' },
+            { word: 'Diligent', definition: 'Having or showing care and conscientiousness in one’s work or duties.', synonym: 'Hardworking' },
+            { word: 'Garrulous', definition: 'Excessively talkative, especially on trivial matters.', synonym: 'Chatty' },
+            // ... Continue for the next 330 words
         ];
 
         // Function to choose a random word
@@ -150,17 +230,15 @@
         // Toggle definition visibility
         function toggleDefinition() {
             const definitionElement = document.getElementById('definition');
-            definitionElement.style.display = definitionElement.style.display === 'none' || definitionElement.style.display === '' 
-                ? 'block' : 'none';
             definitionElement.textContent = word.definition;
+            definitionElement.classList.toggle('show');
         }
 
         // Toggle synonym visibility
         function toggleSynonym() {
             const synonymElement = document.getElementById('synonym');
-            synonymElement.style.display = synonymElement.style.display === 'none' || synonymElement.style.display === '' 
-                ? 'block' : 'none';
             synonymElement.textContent = word.synonym;
+            synonymElement.classList.toggle('show');
         }
     </script>
 
