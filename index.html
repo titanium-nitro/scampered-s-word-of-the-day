@@ -94,7 +94,7 @@
 
         /* Animation for definition/synonym */
         .definition, .synonym {
-            display: none;
+            display: none; /* Start with hidden */
             margin-top: 20px;
             font-size: 1.2rem;
             color: #666;
@@ -112,7 +112,8 @@
         }
 
         .definition.show, .synonym.show {
-            transform: scaleY(1);
+            display: block; /* Make them visible when 'show' class is added */
+            transform: scaleY(1); /* Trigger the animation */
         }
 
         /* Animations */
